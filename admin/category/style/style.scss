@@ -1,0 +1,11 @@
+.container {
+  &.mt-30 {
+    margin-top: 30px;
+  }
+
+  &__title-table {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
