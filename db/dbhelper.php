@@ -26,16 +26,19 @@ function executeResult($sql)
 
     // Query
     $resultset = mysqli_query($conn, $sql);
-    $list = [];
-    while ($row = mysqli_fetch_array($resultset, 1)) {
-        // Thêm vào cuối phần tử mới
-        $list[] = $row;
+    $data = [];
+
+    if ($resultset != null) {
+        while ($row = mysqli_fetch_array($resultset, 1)) {
+            // Thêm vào cuối phần tử mới
+            $data[] = $row;
+        }
     }
 
     // Đóng kết nối
     mysqli_close($conn);
 
-    return $list;
+    return $data;
 }
 
 function executeSingleResult($sql)

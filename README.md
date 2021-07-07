@@ -39,3 +39,6 @@
 - Quản Lý Danh Mục
   - Hiển thị danh sách
   - Thêm/Sửa/Xóa
+- Quản Lý Sản Phẩm
+  - Hiển thị danh sách sản phẩm
+  - Thêm/Sửa/Xóa
