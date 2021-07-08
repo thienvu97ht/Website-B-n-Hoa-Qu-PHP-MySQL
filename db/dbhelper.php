@@ -41,6 +41,7 @@ function executeResult($sql)
     return $data;
 }
 
+// Chỉ lấy 1 phần tử
 function executeSingleResult($sql)
 {
     // Tạo connection tới database
