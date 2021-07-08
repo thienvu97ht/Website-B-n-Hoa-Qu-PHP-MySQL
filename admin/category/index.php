@@ -1,5 +1,6 @@
 <?php
 require_once('../../db/dbhelper.php');
+require_once('../../common/util.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -39,6 +40,13 @@ require_once('../../db/dbhelper.php');
                 </a>
             </div>
             <div class="panel-body">
+                <form method="GET">
+                    <div class="form-group">
+                        <label for="s">Tìm kiếm</label>
+                        <input type="text" class="form-control" id="s" placeholder="Searching..." name="s">
+                    </div>
+                </form>
+
                 <table class="table table-bordered table-hover">
                     <thead>
                         <tr>
@@ -50,13 +58,46 @@ require_once('../../db/dbhelper.php');
                     <tbody>
                         <?php
 
-                        $sql = "SELECT * FROM category";
+                        $itemPerPage = 4;
+                        $currentPage = 1;
+                        if (isset($_GET['page'])) {
+                            $currentPage = $_GET['page'];
+                        }
+
+                        if ($currentPage <= 0) {
+                            $currentPage = 1;
+                        }
+
+                        $start = ($currentPage - 1) * $itemPerPage;
+
+                        $s = "";
+                        if (isset($_GET['s'])) {
+                            $s = $_GET['s'];
+                        }
+
+                        // Trang cần lấy sản phẩm
+                        $additional = "";
+                        if (!empty($s)) {
+                            $additional = "AND name LIKE '%" . $s . "%'";
+                        }
+                        $sql = "SELECT * FROM category WHERE 1 " . $additional . " LIMIT " . $start . ',' . $itemPerPage;
+                        echo $sql;
                         $categoryList = executeResult($sql);
-                        $index = 1;
+
+                        // Tính tổng số trang
+                        $sql = "SELECT count(id) AS total FROM category WHERE 1 " . $additional . "";
+
+                        $countResult = executeSingleResult($sql);
+                        $totalPage = 0;
+                        if ($countResult != null) {
+                            $count = $countResult['total'];
+                            $totalPage = ceil($count / $itemPerPage);
+                        }
+
                         foreach ($categoryList as $item) {
                             echo
                             '<tr>
-                                <td class="text-center">' . ($index++) . '</td>
+                                <td class="text-center">' . (++$start) . '</td>
                                 <td>' .  $item['name'] . '</td>
                                 <td class="text-center" width="80px">
                                     <a href="add.php?id=' . $item['id'] . '" >
@@ -76,6 +117,8 @@ require_once('../../db/dbhelper.php');
                     </tbody>
                 </table>
 
+                <!-- Bài toán phân trang -->
+                <?= pagination($totalPage, $currentPage, '&s=' . $s) ?>
             </div>
         </div>
     </div>

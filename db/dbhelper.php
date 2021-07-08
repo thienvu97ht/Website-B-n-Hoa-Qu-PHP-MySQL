@@ -51,8 +51,10 @@ function executeSingleResult($sql)
 
     // Query
     $resultset = mysqli_query($conn, $sql);
-    $row = mysqli_fetch_array($resultset, 1);
-
+    $row = null;
+    if ($resultset != null) {
+        $row = mysqli_fetch_array($resultset, 1);
+    }
     // Đóng kết nối
     mysqli_close($conn);
 
