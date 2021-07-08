@@ -6,6 +6,7 @@ $name = $id = '';
 if (!empty($_POST)) {
     if (isset($_POST['name'])) {
         $name = $_POST['name'];
+        $name = str_replace('"', '\\"', $name);
     }
 
     if (isset($_POST['id'])) {

@@ -64,8 +64,8 @@ require_once '../../db/dbhelper.php';
                             echo
                             '<tr>
                                 <td class="text-center">' . ($index++) . '</td>
-                                <td>
-                                    <img src="' . $item['thumbnail'] . '" style="max-width: 200px" />
+                                <td class="text-center">
+                                    <img src="' . $item['thumbnail'] . '" style="max-width: 120px" />
                                 </td>
                                 <td>' . $item['title'] . '</td>
                                 <td>' . $item['price'] . '</td>

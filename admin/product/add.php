@@ -10,32 +10,40 @@ if (!empty($_POST)) {
 
     if (isset($_POST['title'])) {
         $title = $_POST['title'];
+        $title = str_replace('"', '\\"', $title);
     }
 
     if (isset($_POST['thumbnail'])) {
         $thumbnail = $_POST['thumbnail'];
+        $thumbnail = str_replace('"', '\\"', $thumbnail);
     }
 
     if (isset($_POST['price'])) {
         $price = $_POST['price'];
+        $price = str_replace('"', '\\"', $price);
     }
 
     if (isset($_POST['id_category'])) {
         $id_category = $_POST['id_category'];
+        $id_category = str_replace('"', '\\"', $id_category);
     }
 
     if (isset($_POST['content'])) {
         $content = $_POST['content'];
+        $content = str_replace('"', '\\"', $content);
     }
 
 
-    if (!empty($name)) {
+    if (!empty($title)) {
         $created_at = $updated_at = date('Y-m-d H:s:i');
         // Lưu vào database
         if ($id == "") {
-            $sql = "INSERT INTO product (title, price, content, id_category, created_at, updated_at) VALUES ('$name','$created_at','$updated_at')";
+            $sql = "INSERT INTO product (title, thumbnail, price, content, id_category, created_at, 
+            updated_at) VALUES ('$title','$thumbnail','$price','$content','$id_category',
+            '$created_at','$updated_at')";
         } else {
-            $sql = "UPDATE category set name = '$name', created_at = '$created_at', updated_at= '$updated_at' WHERE id = " . $id;
+            $sql = "UPDATE product set title = '$title', thumbnail = '$thumbnail', 
+            price = '$price', content = '$content', id_category = '$id_category', created_at = '$created_at', updated_at= '$updated_at' WHERE id = " . $id;
         }
 
         execute($sql);
@@ -46,10 +54,14 @@ if (!empty($_POST)) {
 
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
-    $sql = "SELECT * FROM category WHERE id = " . $id;
-    $category = executeSingleResult($sql);
-    if ($category != null) {
-        $name = $category['name'];
+    $sql = "SELECT * FROM product WHERE id = " . $id;
+    $product = executeSingleResult($sql);
+    if ($product != null) {
+        $title = $product['title'];
+        $price = $product['price'];
+        $thumbnail = $product['thumbnail'];
+        $id_category = $product['id_category'];
+        $content = $product['content'];
     }
 }
 ?>
@@ -65,6 +77,9 @@ if (isset($_GET['id'])) {
 
     <link rel="stylesheet" media="screen" href="//netdna.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
     <link rel="stylesheet" href="./style/style.min.css">
+
+    <!-- include summernote css/js -->
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
 
 </head>
 
@@ -106,7 +121,11 @@ if (isset($_GET['id'])) {
                             $sql = "SELECT * FROM category";
                             $categoryList = executeResult($sql);
                             foreach ($categoryList as $item) {
-                                echo '<option value="' . $item['id'] . '">' . $item['name'] . '</option>';
+                                if ($item['id'] == $id_category) {
+                                    echo '<option selected value="' . $item['id'] . '">' . $item['name'] . '</option>';
+                                } else {
+                                    echo '<option value="' . $item['id'] . '">' . $item['name'] . '</option>';
+                                }
                             }
                             ?>
                         </select>
@@ -120,13 +139,14 @@ if (isset($_GET['id'])) {
                     <div class="form-group">
                         <label for="thumbnail">Thumbnail</label>
                         <input type="text" class="form-control" id="thumbnail" name="thumbnail"
-                            value="<?= $thumbnail ?>">
+                            value="<?= $thumbnail ?>" onchange="updateThumbnail()">
+                        <img src="<?= $thumbnail ?>" alt="" style="max-width: 200px; margin-top: 20px"
+                            id="img_thumbnail">
                     </div>
 
                     <div class="form-group">
-                        <label for="content">Nọi dung</label>
-                        <textarea type="text" class="form-control" id="content" name="content" value="<?= $content ?>">
-                    </textarea>
+                        <label for="content">Nội dung</label>
+                        <textarea class="form-control" rows="5" name="content" id="content"><?= $content ?></textarea>
                     </div>
 
                     <?= $id == "" ? '<button type="submit" class="btn btn-success">Thêm sản phẩm</button>' :
@@ -140,6 +160,20 @@ if (isset($_GET['id'])) {
 
     <script src="//code.jquery.com/jquery.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+    <script>
+    function updateThumbnail() {
+        $('#img_thumbnail').attr('src', $('#thumbnail').val());
+    };
+
+    $(function() {
+        // Đợi website load xong nội dung => xử lý phần JS
+        $('#content').summernote({
+            height: 150, // set editor height
+            'disableResizeEditor': false,
+        });
+    });
+    </script>
 </body>
 
 </html>
